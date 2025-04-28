@@ -1,0 +1,298 @@
+%% Section 5.1
+% case 1:
+dim = 50;
+d = zeros(dim,1);
+for i = 1:dim
+    d(i) = i/dim;
+end
+A = generate_full_matrix(dim,d);
+
+b = ones(dim,1)/sqrt(dim);
+m = 10;                
+beta = zeros(m,1);
+alpha = zeros(m,1);
+
+K = zeros(dim,m+1);
+
+K(:,1) = b/norm(b);
+K(:,2) = A*K(:,1);
+alpha(1) = sum(K(:,2).*K(:,1));
+
+for i = 1:m-1
+	K(:,i+1) = K(:,i+1) - K(:,i).*alpha(i);
+	beta(i+1) = sqrt(sum(K(:,i+1).*K(:,i+1)));
+	K(:,i+1) = K(:,i+1)./beta(i+1);
+	K(:,i+2) = A*K(:,i+1) - K(:,i).*beta(i+1);
+	alpha(i+1) = sum(K(:,i+2).*K(:,i+1));
+end
+
+T1 = diag(alpha) + diag(beta(2:end),1) + diag(beta(2:end),-1);
+[~,D1] = eig(T1);
+D1 = diag(D1);
+
+lambdaM = D1(10);
+lambdam = D1(1);
+
+x = ones(1,dim);
+x = x./norm(x);
+H = eye(dim,dim) - 2 * (x' * x);
+mu = H'*b;
+mu2 = zeros(dim,1);
+mu2(1) = mu(1)^2;
+for i = 2:dim
+    mu2(i) = mu(i)^2 + mu2(i-1);
+end
+
+index1 = find(D1 > (lambdaM+lambdam)/2, 1);
+D1_n = D1(1: index1 - 1);
+D1_p = D1(index1:10);
+
+subplot(2,1,1);
+stairs([0;d],[0;mu2(1:dim,1)]);
+set(gca, 'FontSize', 12);
+ylim([0,1]);
+xlabel("$t$",Interpreter = 'latex');
+ylabel("$\mu(t)$",Interpreter = 'latex')
+
+
+subplot(2,1,2);
+p_1_n = plot(D1_n,zeros(index1 - 1), '.r', 'MarkerSize', 12);
+ylim([-0.1,0.1]);
+hold on;
+p_1_p = plot(D1_p,zeros(11 - index1), '.b', 'MarkerSize', 12);
+ylim([-0.1,0.1]);
+hold on;
+legend([p_1_n(1), p_1_p(1)], '5 nodes <(\theta_{1}+\theta_{10})/2', '5 nodes > (\theta_{1}+\theta_{10})/2', 'Orientation', 'horizontal');
+hold on;
+grid on;
+bar = ['$$\bar{\lambda}$$'];
+set(gca, "FontSize", 12);
+set(gca, 'XTick', [lambdam, (lambdaM+lambdam)/2, lambdaM]);
+s =set(gca, 'XTicklabel', { '\theta_{1}','(\theta_{1} + \theta_{10})/2','\theta_{10}'});
+set(gca, 'YTick', [0]);
+xlabel("Ritz values $\theta$", Interpreter='latex');
+hold off;
+
+% case 2:
+clear;
+dim = 50;
+d = zeros(dim,1);
+for i = 1:dim
+    d(i) = 1/(dim+1-i);
+end
+A = generate_full_matrix(dim,d);
+
+b = ones(dim,1)/sqrt(dim);
+m = 10;                
+beta = zeros(m,1);
+alpha = zeros(m,1);
+
+K = zeros(dim,m+1);
+
+K(:,1) = b/norm(b);
+K(:,2) = A*K(:,1);
+alpha(1) = sum(K(:,2).*K(:,1));
+
+for i = 1:m-1
+	K(:,i+1) = K(:,i+1) - K(:,i).*alpha(i);
+	beta(i+1) = sqrt(sum(K(:,i+1).*K(:,i+1)));
+	K(:,i+1) = K(:,i+1)./beta(i+1);
+	K(:,i+2) = A*K(:,i+1) - K(:,i).*beta(i+1);
+	alpha(i+1) = sum(K(:,i+2).*K(:,i+1));
+end
+
+T1 = diag(alpha) + diag(beta(2:end),1) + diag(beta(2:end),-1);
+[~,D1] = eig(T1);
+D1 = diag(D1);
+
+lambdaM = D1(10);
+lambdam = D1(1);
+
+x = ones(1,dim);
+x = x./norm(x);
+H = eye(dim,dim) - 2 * (x' * x);
+mu = H'*b;
+mu2 = zeros(dim,1);
+mu2(1) = mu(1)^2;
+for i = 2:dim
+    mu2(i) = mu(i)^2 + mu2(i-1);
+end
+
+index1 = find(D1 > (lambdaM+lambdam)/2, 1);
+D1_n = D1(1: index1 - 1);
+D1_p = D1(index1:10);
+
+subplot(2,1,1);
+stairs([0;d],[0;mu2(1:dim,1)]);
+set(gca, 'FontSize', 12);
+ylim([0,1]);
+xlabel("$t$",Interpreter = 'latex');
+ylabel("$\mu(t)$",Interpreter = 'latex')
+
+
+subplot(2,1,2);
+p_1_n = plot(D1_n,zeros(index1 - 1), '.r', 'MarkerSize', 12);
+ylim([-0.1,0.1]);
+hold on;
+p_1_p = plot(D1_p,zeros(11 - index1), '.b', 'MarkerSize', 12);
+ylim([-0.1,0.1]);
+hold on;
+legend([p_1_n(1), p_1_p(1)], '9 nodes <(\theta_{1}+\theta_{10})/2', '1 node > (\theta_{1}+\theta_{10})/2', 'Orientation', 'horizontal');
+hold on;
+grid on;
+bar = ['$$\bar{\lambda}$$'];
+set(gca, "FontSize", 12);
+set(gca, 'XTick', [lambdam, (lambdaM+lambdam)/2, lambdaM]);
+s =set(gca, 'XTicklabel', { '\theta_{1}','(\theta_{1} + \theta_{10})/2','\theta_{10}'});
+set(gca, 'YTick', [0]);
+xlabel("Ritz values $\theta$", Interpreter='latex');
+hold off;
+
+% case 3:
+clear;
+dim = 50;
+d = zeros(dim,1);
+for i = 1:dim
+    d(i) = i/dim;
+end
+A = generate_full_matrix(dim,d);
+
+b = (1:1:50)';
+b = b/norm(b);
+m = 10;                
+beta = zeros(m,1);
+alpha = zeros(m,1);
+
+K = zeros(dim,m+1);
+
+K(:,1) = b/norm(b);
+K(:,2) = A*K(:,1);
+alpha(1) = sum(K(:,2).*K(:,1));
+
+for i = 1:m-1
+	K(:,i+1) = K(:,i+1) - K(:,i).*alpha(i);
+	beta(i+1) = sqrt(sum(K(:,i+1).*K(:,i+1)));
+	K(:,i+1) = K(:,i+1)./beta(i+1);
+	K(:,i+2) = A*K(:,i+1) - K(:,i).*beta(i+1);
+	alpha(i+1) = sum(K(:,i+2).*K(:,i+1));
+end
+
+T1 = diag(alpha) + diag(beta(2:end),1) + diag(beta(2:end),-1);
+[~,D1] = eig(T1);
+D1 = diag(D1);
+
+lambdaM = D1(10);
+lambdam = D1(1);
+
+x = ones(1,dim);
+x = x./norm(x);
+H = eye(dim,dim) - 2 * (x' * x);
+mu = H'*b;
+mu2 = zeros(dim,1);
+mu2(1) = mu(1)^2;
+for i = 2:dim
+    mu2(i) = mu(i)^2 + mu2(i-1);
+end
+
+index1 = find(D1 > (lambdaM+lambdam)/2, 1);
+D1_n = D1(1: index1 - 1);
+D1_p = D1(index1:10);
+
+subplot(2,1,1);
+stairs([0;d],[0;mu2(1:dim,1)]);
+set(gca, 'FontSize', 12);
+ylim([0,1]);
+xlabel("$t$",Interpreter = 'latex');
+ylabel("$\mu(t)$",Interpreter = 'latex')
+
+subplot(2,1,2);
+p_1_n = plot(D1_n,zeros(index1 - 1), '.r', 'MarkerSize', 12);
+ylim([-0.1,0.1]);
+hold on;
+p_1_p = plot(D1_p,zeros(11 - index1), '.b', 'MarkerSize', 12);
+ylim([-0.1,0.1]);
+hold on;
+legend([p_1_n(1), p_1_p(1)], '5 nodes <(\theta_{1}+\theta_{10})/2', '5 nodes > (\theta_{1}+\theta_{10})/2', 'Orientation', 'horizontal');
+hold on;
+grid on;
+bar = ['$$\bar{\lambda}$$'];
+set(gca, "FontSize", 12);
+set(gca, 'XTick', [lambdam, (lambdaM+lambdam)/2, lambdaM]);
+s =set(gca, 'XTicklabel', { '\theta_{1}','(\theta_{1} + \theta_{10})/2','\theta_{10}'});
+set(gca, 'YTick', [0]);
+xlabel("Ritz values $\theta$", Interpreter='latex');
+hold off;
+
+% case 4:
+clear;
+load('nd3k.mat');
+A = Problem.A;
+dim = size(A,1);
+
+% Rademacher vector
+
+b = ones(dim,1);       
+b(dim/2+1:end) = -1 * ones(dim/2,1);
+b = b/norm(b);
+
+m = 10;                
+beta = zeros(m,1);
+alpha = zeros(m,1);
+
+K = zeros(dim,m+1);
+
+K(:,1) = b/norm(b);
+K(:,2) = A*K(:,1);
+alpha(1) = sum(K(:,2).*K(:,1));
+
+for i = 1:m-1
+	K(:,i+1) = K(:,i+1) - K(:,i).*alpha(i);
+	beta(i+1) = sqrt(sum(K(:,i+1).*K(:,i+1)));
+	K(:,i+1) = K(:,i+1)./beta(i+1);
+	K(:,i+2) = A*K(:,i+1) - K(:,i).*beta(i+1);
+	alpha(i+1) = sum(K(:,i+2).*K(:,i+1));
+end
+
+T1 = diag(alpha) + diag(beta(2:end),1) + diag(beta(2:end),-1);
+[~,D1] = eig(T1);
+D1 = diag(D1);
+
+lambdaM = D1(10);
+lambdam = D1(1);
+
+[Q,D] = eig(full(A));
+mu = Q'*b;
+mu2 = zeros(dim);
+mu2(1) = mu(1)^2;
+for i = 2:dim
+    mu2(i) = mu(i)^2 + mu2(i-1);
+end
+
+index1 = find(D1 > (lambdaM+lambdam)/2, 1);
+D1_n = D1(1: index1 - 1);
+D1_p = D1(index1:10);
+
+subplot(2,1,1);
+stairs([0;diag(D)],[0;mu2(1:dim,1)]);
+set(gca, 'FontSize', 12);
+ylim([0,1]);
+xlabel("$t$",Interpreter = 'latex');
+ylabel("$\mu(t)$",Interpreter = 'latex')
+
+subplot(2,1,2);
+p_1_n = plot(D1_n,zeros(index1 - 1), '.r', 'MarkerSize', 12);
+ylim([-0.1,0.1]);
+hold on;
+p_1_p = plot(D1_p,zeros(11 - index1), '.b', 'MarkerSize', 12);
+ylim([-0.1,0.1]);
+hold on;
+legend([p_1_n(1), p_1_p(1)], '5 nodes <(\theta_{1}+\theta_{10})/2', '5 nodes > (\theta_{1}+\theta_{10})/2', 'Orientation', 'horizontal');
+hold on;
+grid on;
+bar = ['$$\bar{\lambda}$$'];
+set(gca, "FontSize", 12);
+set(gca, 'XTick', [lambdam, (lambdaM+lambdam)/2, lambdaM]);
+s =set(gca, 'XTicklabel', { '\theta_{1}','(\theta_{1} + \theta_{10})/2','\theta_{10}'});
+set(gca, 'YTick', [0]);
+xlabel("Ritz values $\theta$", Interpreter='latex');
+hold off;
