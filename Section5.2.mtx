@@ -19,7 +19,6 @@ for i = 1:100
     Quad_vec_syn(i) = 2*Lanczos_Quadrature(A, v1_syn, 100);
 end
 
-
 Quad_vec2_syn = zeros(100,1);
 for i = 1:100
     v2_syn = zeros(2000,1);
@@ -27,13 +26,11 @@ for i = 1:100
     Quad_vec2_syn(i) = 2*Lanczos_Quadrature(A, v2_syn, 100);
 end
 
-
 Quad_vec3_syn = zeros(100,1);
 for i = 1:100
     v3_syn = rademacher(2000,1);
     Quad_vec3_syn(i) = Lanczos_Quadrature(A, v3_syn, 100);
 end
-
 
 plot((1:1:100),Quad_vec_syn, 'sk');
 hold on;
@@ -63,14 +60,12 @@ lambda = eig(A);
 lambda_max = lambda(2*len);
 exact = trace(expm(A*0.5/lambda_max));
 
-
 Quad_vec1_email = zeros(100,1);
 for i = 1:100
     v1_email = rademacher(2*len,1);
     v1_email(len+1:2*len) = zeros(len,1);
     Quad_vec1_email(i) = 2*Lanczos_Quadrature(A*0.5/lambda_max, v1_email, 100);
 end
-
 
 Quad_vec2_email = zeros(100,1);
 for i = 1:100
@@ -79,13 +74,11 @@ for i = 1:100
     Quad_vec2_email(i) = 2*Lanczos_Quadrature(A*0.5/lambda_max, v2_email, 100);
 end
 
-
 Quad_vec3_email = zeros(100,1);
 for i = 1:100
     v3_email = rademacher(2*len,1);
     Quad_vec3_email(i) = Lanczos_Quadrature(A*0.5/lambda_max, v3_email, 100);
 end
-
 
 plot((1:1:100),Quad_vec1_email, 'sk');
 hold on;
@@ -118,14 +111,12 @@ B = Problem.A;
 A = [sparse(n1,n1) B;B' sparse(n2,n2)];
 lambdamax = max(eigs(A))
 
-
 Quad_vec1_movie = zeros(100,1);
 for i = 1:100
     v1_movie = rademacher(n1,1);
     v1_movie(n1+1:n1+n2) = zeros(n2,1);
     Quad_vec1_movie(i) = 2*Lanczos_Quadrature(A/lambdamax, v1_movie, 100) - (n1-n2)*exp(0);
 end
-
 
 Quad_vec2_movie = zeros(100,1);
 for i = 1:100
@@ -134,13 +125,11 @@ for i = 1:100
     Quad_vec2_movie(i) = 2*Lanczos_Quadrature(A/lambdamax, v2_movie, 100) + (n1-n2)*exp(0);
 end
 
-
 Quad_vec3_movie = zeros(100,1);
 for i = 1:100
     v3_movie = rademacher(n1+n2,1);
     Quad_vec3_movie(i) = Lanczos_Quadrature(A/lambdamax, v3_movie, 100);
 end
-
 
 plot((1:1:100),Quad_vec1_movie, 'sk');
 hold on;
