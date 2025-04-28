@@ -2,7 +2,6 @@ function S = rademacher(m,n)
 %RADEMACHER(m,n) generates a random Rademacher distributed matrix with size
 % m*n.
 %
-%
 %  Input: 
 %  m: number of rows
 %  n: number of columns
