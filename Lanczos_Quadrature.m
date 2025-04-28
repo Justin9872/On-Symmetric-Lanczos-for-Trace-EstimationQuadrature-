@@ -18,7 +18,7 @@ function [Im,theta,tau,T] = Lanczos_Quadrature(A, u, m, n)
 %  A = gallery('wathen',10,10); u = ones(length(A),1); 
 %  T = Lanczos(A,u,100);
 %
-%  Copyright: Shengxin Zhu, Beijing Normal University
+%  Copyright: Shengxin Zhu, Beijing Normal University; Wenhao Li, HongKong Baptist University.
 alpha = zeros(m,1);
 beta = zeros(m+1,1);
 xold = zeros(n,1);
