@@ -1,0 +1,159 @@
+%% Section 5.2
+% Section 5.2.1 Synthetic matrix
+% Build test matrix.
+clear;
+rng(1);
+U = orth(randn(1000,1000));
+rng(2);
+V = orth(randn(1000,1000));
+rng(3);
+sigma = randn(1000,1);
+Sigma = diag(sigma);
+A = [zeros(1000,1000) U*Sigma*V'; V*Sigma*U' zeros(1000,1000)]; % Guarantees positive definitiness.
+[Q,L] = eig(A);
+exact = trace(expm(A));
+Quad_vec_syn = zeros(100,1);
+for i = 1:100
+    v1_syn = rademacher(1000,1);
+    v1_syn(1001:2000) = zeros(1000,1);
+    Quad_vec_syn(i) = 2*Lanczos_Quadrature(A, v1_syn, 100);
+end
+
+
+Quad_vec2_syn = zeros(100,1);
+for i = 1:100
+    v2_syn = zeros(2000,1);
+    v2_syn(1001:2000) = rademacher(1000,1);
+    Quad_vec2_syn(i) = 2*Lanczos_Quadrature(A, v2_syn, 100);
+end
+
+
+Quad_vec3_syn = zeros(100,1);
+for i = 1:100
+    v3_syn = rademacher(2000,1);
+    Quad_vec3_syn(i) = Lanczos_Quadrature(A, v3_syn, 100);
+end
+
+
+plot((1:1:100),Quad_vec_syn, 'sk');
+hold on;
+plot((1:1:100),Quad_vec2_syn, 'ok');
+hold on;
+plot((1:1:100),Quad_vec3_syn, '-k');
+hold on;
+plot((1:1:100),exact.*ones(100,1), '-r');
+hold on;
+s1 = xlabel('trials', 'FontSize', 14);
+s2 = ylabel('estimation of tr($e^A$)', 'FontSize', 14);
+s3 = legend('upper $\mathbf{\tilde{z}}$', 'lower $\mathbf{\tilde{z}}$', 'full $\mathbf{z}$', 'exact computation');
+set(s1, 'Interpreter', 'latex')
+set(s2, 'Interpreter', 'latex')
+set(s3, 'Interpreter', 'latex')
+hold off;
+sqrt(var(Quad_vec_syn))
+sqrt(var(Quad_vec2_syn))
+sqrt(var(Quad_vec3_syn))
+
+% Section 5.2.2 email dataset
+clear;
+B = full(mmread('email.mtx'));
+len = length(B);
+A = [zeros(len,len) B;B' zeros(len,len)];
+lambda = eig(A);
+lambda_max = lambda(2*len);
+exact = trace(expm(A*0.5/lambda_max));
+
+
+Quad_vec1_email = zeros(100,1);
+for i = 1:100
+    v1_email = rademacher(2*len,1);
+    v1_email(len+1:2*len) = zeros(len,1);
+    Quad_vec1_email(i) = 2*Lanczos_Quadrature(A*0.5/lambda_max, v1_email, 100);
+end
+
+
+Quad_vec2_email = zeros(100,1);
+for i = 1:100
+    v2_email = zeros(2*len,1);
+    v2_email(len + 1:2*len) = rademacher(len,1);
+    Quad_vec2_email(i) = 2*Lanczos_Quadrature(A*0.5/lambda_max, v2_email, 100);
+end
+
+
+Quad_vec3_email = zeros(100,1);
+for i = 1:100
+    v3_email = rademacher(2*len,1);
+    Quad_vec3_email(i) = Lanczos_Quadrature(A*0.5/lambda_max, v3_email, 100);
+end
+
+
+plot((1:1:100),Quad_vec1_email, 'sk');
+hold on;
+plot((1:1:100),Quad_vec2_email, 'ok');
+hold on;
+plot((1:1:100),Quad_vec3_email, '-k');
+hold on;
+plot((1:1:100),exact.*ones(100,1), '-r');
+hold on;
+s4 = xlabel('trials', 'FontSize', 14);
+s5 = ylabel('estimation of tr($e^{0.5A/\lambda_{max}}$)', 'FontSize', 14);
+s6 = legend('upper $\mathbf{\tilde{z}}$', 'lower $\mathbf{\tilde{z}}$', 'full $\mathbf{z}$', 'exact computation');
+sqrt(var(Quad_vec1_email))
+sqrt(var(Quad_vec2_email))
+sqrt(var(Quad_vec3_email))
+set(s4, 'Interpreter', 'latex')
+set(s5, 'Interpreter', 'latex')
+set(s6, 'Interpreter', 'latex')
+hold off;
+
+sqrt(var(Quad_vec1_email))
+sqrt(var(Quad_vec2_email))
+sqrt(var(Quad_vec3_email))
+
+% Section 5.2.3 movie dataset
+clear;
+load('NotreDame_actors.mat');
+B = Problem.A;
+[n1, n2] = size(B);
+A = [sparse(n1,n1) B;B' sparse(n2,n2)];
+lambdamax = max(eigs(A))
+
+
+Quad_vec1_movie = zeros(100,1);
+for i = 1:100
+    v1_movie = rademacher(n1,1);
+    v1_movie(n1+1:n1+n2) = zeros(n2,1);
+    Quad_vec1_movie(i) = 2*Lanczos_Quadrature(A/lambdamax, v1_movie, 100) - (n1-n2)*exp(0);
+end
+
+
+Quad_vec2_movie = zeros(100,1);
+for i = 1:100
+    v2_movie = zeros(n1+n2,1);
+    v2_movie(n1+1:n1+n2) = rademacher(n2,1);
+    Quad_vec2_movie(i) = 2*Lanczos_Quadrature(A/lambdamax, v2_movie, 100) + (n1-n2)*exp(0);
+end
+
+
+Quad_vec3_movie = zeros(100,1);
+for i = 1:100
+    v3_movie = rademacher(n1+n2,1);
+    Quad_vec3_movie(i) = Lanczos_Quadrature(A/lambdamax, v3_movie, 100);
+end
+
+
+plot((1:1:100),Quad_vec1_movie, 'sk');
+hold on;
+plot((1:1:100),Quad_vec2_movie, 'ok');
+hold on;
+plot((1:1:100),Quad_vec3_movie, '-k');
+hold on;
+s7 = xlabel('trials', 'FontSize', 14);
+s8 = ylabel('estimation of tr($e^{A/\lambda_{max}}$)', 'FontSize', 14);
+s9 = legend('upper $\mathbf{\tilde{z}}$', 'lower $\mathbf{\tilde{z}}$', 'full $\mathbf{z}$');
+set(s7, 'Interpreter', 'latex')
+set(s8, 'Interpreter', 'latex')
+set(s9, 'Interpreter', 'latex')
+sqrt(var(Quad_vec1_movie))
+sqrt(var(Quad_vec2_movie))
+sqrt(var(Quad_vec3_movie))
