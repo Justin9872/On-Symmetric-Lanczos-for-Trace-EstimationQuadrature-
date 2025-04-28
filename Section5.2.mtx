@@ -12,11 +12,11 @@ Sigma = diag(sigma);
 A = [zeros(1000,1000) U*Sigma*V'; V*Sigma*U' zeros(1000,1000)]; % Guarantees positive definitiness.
 [Q,L] = eig(A);
 exact = trace(expm(A));
-Quad_vec_syn = zeros(100,1);
+Quad_vec1_syn = zeros(100,1);
 for i = 1:100
     v1_syn = rademacher(1000,1);
     v1_syn(1001:2000) = zeros(1000,1);
-    Quad_vec_syn(i) = 2*Lanczos_Quadrature(A, v1_syn, 100);
+    Quad_vec1_syn(i) = 2*Lanczos_Quadrature(A, v1_syn, 100);
 end
 
 Quad_vec2_syn = zeros(100,1);
@@ -32,7 +32,7 @@ for i = 1:100
     Quad_vec3_syn(i) = Lanczos_Quadrature(A, v3_syn, 100);
 end
 
-plot((1:1:100),Quad_vec_syn, 'sk');
+plot((1:1:100),Quad_vec1_syn, 'sk');
 hold on;
 plot((1:1:100),Quad_vec2_syn, 'ok');
 hold on;
@@ -47,7 +47,7 @@ set(s1, 'Interpreter', 'latex')
 set(s2, 'Interpreter', 'latex')
 set(s3, 'Interpreter', 'latex')
 hold off;
-sqrt(var(Quad_vec_syn))
+sqrt(var(Quad_vec1_syn))
 sqrt(var(Quad_vec2_syn))
 sqrt(var(Quad_vec3_syn))
 
