@@ -54,7 +54,6 @@ ylim([0,1]);
 xlabel("$t$",Interpreter = 'latex');
 ylabel("$\mu(t)$",Interpreter = 'latex')
 
-
 subplot(2,1,2);
 p_1_n = plot(D1_n,zeros(index1 - 1), '.r', 'MarkerSize', 12);
 ylim([-0.1,0.1]);
@@ -128,7 +127,6 @@ set(gca, 'FontSize', 12);
 ylim([0,1]);
 xlabel("$t$",Interpreter = 'latex');
 ylabel("$\mu(t)$",Interpreter = 'latex')
-
 
 subplot(2,1,2);
 p_1_n = plot(D1_n,zeros(index1 - 1), '.r', 'MarkerSize', 12);
